@@ -7,7 +7,7 @@
 }
 
 .homeSectionItem .listItemBody::after {
-    color: var(--theme-primary-color);
+    color: var(--jf-palette-primary-main);
     content: '';
     font-size: 0.8em;
     margin-left: 0.75em;
@@ -27,9 +27,8 @@
 }
 
 .homeSectionItem-ghost {
-    background: var(--theme-primary-color);
-    opacity: 0.25;
-    outline: 2px solid var(--theme-primary-color);
+    background: rgb(var(--jf-palette-primary-mainChannel) / 0.24);
+    outline: 2px solid var(--jf-palette-primary-main);
 }
 
 .homeSectionItem-dropBefore,
@@ -39,7 +38,7 @@
 
 .homeSectionItem-dropBefore::before,
 .homeSectionItem-dropAfter::after {
-    background: var(--theme-primary-color);
+    background: var(--jf-palette-primary-main);
     border-radius: 999px;
     content: '';
     height: 3px;
@@ -58,8 +57,8 @@
 }
 
 .homeSectionInsertionLine {
-    border-top: 1px solid var(--theme-accent-fill-color);
-    color: var(--theme-primary-color);
+    border-top: 1px solid var(--jf-palette-primary-main);
+    color: var(--jf-palette-primary-main);
     font-size: 0.9em;
     margin: 0.75em 0;
     padding-top: 0.75em;
