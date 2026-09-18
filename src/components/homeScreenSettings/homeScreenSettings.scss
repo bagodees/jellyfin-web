@@ -27,7 +27,8 @@
 }
 
 .homeSectionItem-ghost {
-    background: rgba(0, 164, 220, 0.15);
+    background: var(--theme-primary-color);
+    opacity: 0.25;
     outline: 2px solid var(--theme-primary-color);
 }
 
