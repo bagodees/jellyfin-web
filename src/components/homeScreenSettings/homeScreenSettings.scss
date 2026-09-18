@@ -26,6 +26,11 @@
     opacity: 0.3;
 }
 
+.homeSectionItem-ghost {
+    background: rgba(0, 164, 220, 0.15);
+    outline: 2px solid var(--theme-primary-color);
+}
+
 .homeSectionItem-dropBefore,
 .homeSectionItem-dropAfter {
     position: relative;

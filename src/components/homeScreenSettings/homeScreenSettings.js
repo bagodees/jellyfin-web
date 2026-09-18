@@ -1,5 +1,6 @@
 
 import escapeHtml from 'escape-html';
+import Sortable from 'sortablejs';
 
 import { getUserViewsQuery } from 'hooks/api/useUserViews';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
@@ -73,7 +74,7 @@ function renderHomeSectionsEditor(context, userSettings) {
         const insertionLine = index === visibleSectionCount && visibleSectionCount < sections.length
             ? '<div class="homeSectionInsertionLine">Disabled sections — enable one to add it above this line</div>'
             : '';
-        return `${insertionLine}<div class="listItem homeSectionItem${hidden ? ' homeSectionItem-hidden' : ''}" data-section="${escapeHtml(section)}" data-hidden="${hidden}" draggable="true">
+        return `${insertionLine}<div class="listItem homeSectionItem${hidden ? ' homeSectionItem-hidden' : ''}" data-section="${escapeHtml(section)}" data-hidden="${hidden}">
             <div class="listItemBody">${escapeHtml(label)}</div>
             <button type="button" is="paper-icon-button-light" class="btnHomeSectionToggle autoSize" title="${hidden ? 'Show section' : 'Hide section'}"><span class="material-icons ${hidden ? 'visibility_off' : 'visibility'}" aria-hidden="true"></span></button>
             <button type="button" is="paper-icon-button-light" class="btnHomeSectionUp autoSize" title="${globalize.translate('Up')}"><span class="material-icons keyboard_arrow_up" aria-hidden="true"></span></button>
@@ -100,40 +101,26 @@ function onHomeSectionListClick(e) {
     if (sibling) item.parentElement.insertBefore(item, target.classList.contains('btnHomeSectionUp') ? sibling : sibling.nextElementSibling);
 }
 
-function onHomeSectionDragStart(e) {
-    const item = dom.parentWithClass(e.target, 'homeSectionItem');
-    if (item) e.dataTransfer.setData('text/plain', item.getAttribute('data-section'));
-}
-
-function onHomeSectionDragOver(e) {
-    const item = dom.parentWithClass(e.target, 'homeSectionItem');
-    if (!item) return;
-    e.preventDefault();
-    const list = e.currentTarget;
-    const dragged = list.querySelector('.homeSectionItem-dragging');
-    if (!dragged || dragged === item) return;
-    list.querySelectorAll('.homeSectionItem-dropBefore, .homeSectionItem-dropAfter').forEach(dropTarget => {
-        dropTarget.classList.remove('homeSectionItem-dropBefore', 'homeSectionItem-dropAfter');
-    });
-    const before = e.clientY < item.getBoundingClientRect().top + (item.offsetHeight / 2);
-    item.classList.add(before ? 'homeSectionItem-dropBefore' : 'homeSectionItem-dropAfter');
-}
-
-function onHomeSectionDrop(e) {
-    const item = dom.parentWithClass(e.target, 'homeSectionItem');
-    const list = e.currentTarget;
-    const dragged = list.querySelector('.homeSectionItem-dragging');
-    if (!item || !dragged || dragged === item) return;
-    e.preventDefault();
-    const before = item.classList.contains('homeSectionItem-dropBefore');
-    item.parentElement.insertBefore(dragged, before ? item : item.nextElementSibling);
-}
-
-function onHomeSectionDragEnd(e) {
-    const item = dom.parentWithClass(e.target, 'homeSectionItem');
-    if (item) item.classList.remove('homeSectionItem-dragging');
-    e.currentTarget.querySelectorAll('.homeSectionItem-dropBefore, .homeSectionItem-dropAfter').forEach(dropTarget => {
-        dropTarget.classList.remove('homeSectionItem-dropBefore', 'homeSectionItem-dropAfter');
+function enableHomeSectionSorting(list) {
+    return new Sortable(list, {
+        animation: 150,
+        chosenClass: 'homeSectionItem-dragging',
+        draggable: '.homeSectionItem',
+        ghostClass: 'homeSectionItem-ghost',
+        handle: '.homeSectionDragHandle',
+        onMove: event => {
+            list.querySelectorAll('.homeSectionItem-dropBefore, .homeSectionItem-dropAfter').forEach(dropTarget => {
+                dropTarget.classList.remove('homeSectionItem-dropBefore', 'homeSectionItem-dropAfter');
+            });
+            if (event.related?.classList.contains('homeSectionItem')) {
+                event.related.classList.add(event.willInsertAfter ? 'homeSectionItem-dropAfter' : 'homeSectionItem-dropBefore');
+            }
+        },
+        onEnd: () => {
+            list.querySelectorAll('.homeSectionItem-dropBefore, .homeSectionItem-dropAfter').forEach(dropTarget => {
+                dropTarget.classList.remove('homeSectionItem-dropBefore', 'homeSectionItem-dropAfter');
+            });
+        }
     });
 }
 
@@ -706,15 +693,9 @@ function embed(options, self) {
     options.element.innerHTML = globalize.translateHtml(workingTemplate, 'core');
 
     options.element.querySelector('.viewOrderList').addEventListener('click', onSectionOrderListClick);
-    options.element.querySelector('.homeSectionsList').addEventListener('click', onHomeSectionListClick);
-    options.element.querySelector('.homeSectionsList').addEventListener('dragstart', e => {
-        const item = dom.parentWithClass(e.target, 'homeSectionItem');
-        if (item) item.classList.add('homeSectionItem-dragging');
-        onHomeSectionDragStart(e);
-    });
-    options.element.querySelector('.homeSectionsList').addEventListener('dragover', onHomeSectionDragOver);
-    options.element.querySelector('.homeSectionsList').addEventListener('drop', onHomeSectionDrop);
-    options.element.querySelector('.homeSectionsList').addEventListener('dragend', onHomeSectionDragEnd);
+    const homeSectionsList = options.element.querySelector('.homeSectionsList');
+    homeSectionsList.addEventListener('click', onHomeSectionListClick);
+    enableHomeSectionSorting(homeSectionsList);
     options.element.querySelector('form').addEventListener('submit', onSubmit.bind(self));
     options.element.addEventListener('change', onChange);
 
