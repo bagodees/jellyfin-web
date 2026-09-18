@@ -26,6 +26,31 @@
     opacity: 0.3;
 }
 
+.homeSectionItem-dropBefore,
+.homeSectionItem-dropAfter {
+    position: relative;
+}
+
+.homeSectionItem-dropBefore::before,
+.homeSectionItem-dropAfter::after {
+    background: var(--theme-primary-color);
+    border-radius: 999px;
+    content: '';
+    height: 3px;
+    left: 0.5em;
+    position: absolute;
+    right: 0.5em;
+    z-index: 1;
+}
+
+.homeSectionItem-dropBefore::before {
+    top: -2px;
+}
+
+.homeSectionItem-dropAfter::after {
+    bottom: -2px;
+}
+
 .homeSectionInsertionLine {
     border-top: 1px solid var(--theme-accent-fill-color);
     color: var(--theme-primary-color);

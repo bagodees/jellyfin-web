@@ -109,16 +109,32 @@ function onHomeSectionDragOver(e) {
     const item = dom.parentWithClass(e.target, 'homeSectionItem');
     if (!item) return;
     e.preventDefault();
-    const dragged = e.currentTarget.querySelector('.homeSectionItem-dragging');
-    if (dragged && dragged !== item) {
-        const before = e.clientY < item.getBoundingClientRect().top + (item.offsetHeight / 2);
-        item.parentElement.insertBefore(dragged, before ? item : item.nextElementSibling);
-    }
+    const list = e.currentTarget;
+    const dragged = list.querySelector('.homeSectionItem-dragging');
+    if (!dragged || dragged === item) return;
+    list.querySelectorAll('.homeSectionItem-dropBefore, .homeSectionItem-dropAfter').forEach(dropTarget => {
+        dropTarget.classList.remove('homeSectionItem-dropBefore', 'homeSectionItem-dropAfter');
+    });
+    const before = e.clientY < item.getBoundingClientRect().top + (item.offsetHeight / 2);
+    item.classList.add(before ? 'homeSectionItem-dropBefore' : 'homeSectionItem-dropAfter');
+}
+
+function onHomeSectionDrop(e) {
+    const item = dom.parentWithClass(e.target, 'homeSectionItem');
+    const list = e.currentTarget;
+    const dragged = list.querySelector('.homeSectionItem-dragging');
+    if (!item || !dragged || dragged === item) return;
+    e.preventDefault();
+    const before = item.classList.contains('homeSectionItem-dropBefore');
+    item.parentElement.insertBefore(dragged, before ? item : item.nextElementSibling);
 }
 
 function onHomeSectionDragEnd(e) {
     const item = dom.parentWithClass(e.target, 'homeSectionItem');
     if (item) item.classList.remove('homeSectionItem-dragging');
+    e.currentTarget.querySelectorAll('.homeSectionItem-dropBefore, .homeSectionItem-dropAfter').forEach(dropTarget => {
+        dropTarget.classList.remove('homeSectionItem-dropBefore', 'homeSectionItem-dropAfter');
+    });
 }
 
 function renderViews(page, user, result) {
@@ -697,6 +713,7 @@ function embed(options, self) {
         onHomeSectionDragStart(e);
     });
     options.element.querySelector('.homeSectionsList').addEventListener('dragover', onHomeSectionDragOver);
+    options.element.querySelector('.homeSectionsList').addEventListener('drop', onHomeSectionDrop);
     options.element.querySelector('.homeSectionsList').addEventListener('dragend', onHomeSectionDragEnd);
     options.element.querySelector('form').addEventListener('submit', onSubmit.bind(self));
     options.element.addEventListener('change', onChange);
