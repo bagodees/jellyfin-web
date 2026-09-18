@@ -1,12 +1,12 @@
 import Sortable from 'sortablejs';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { HomeSectionType } from 'constants/homeSectionType';
 import globalize from 'lib/globalize';
 
 import './HomeSectionEditor.scss';
 
-const MAX_HOME_SECTIONS = 10;
+const MAX_HOME_SECTIONS = 16;
 
 const availableSections = [
     HomeSectionType.SmallLibraryTiles,
@@ -17,7 +17,14 @@ const availableSections = [
     HomeSectionType.ResumeBook,
     HomeSectionType.LatestMedia,
     HomeSectionType.NextUp,
-    HomeSectionType.LiveTv
+    HomeSectionType.LiveTv,
+    HomeSectionType.RecentlyAddedMovies,
+    HomeSectionType.RecentlyAddedShows,
+    HomeSectionType.RecentlyAddedAlbums,
+    HomeSectionType.RecentlyAddedArtists,
+    HomeSectionType.RecentlyAddedBooks,
+    HomeSectionType.RecentlyAddedAudiobooks,
+    HomeSectionType.RecentlyAddedMusicVideos
 ] as const;
 
 type Section = typeof availableSections[number];
@@ -40,7 +47,14 @@ const sectionLabels: Record<Section, string> = {
     [HomeSectionType.ResumeBook]: 'HeaderContinueReading',
     [HomeSectionType.LatestMedia]: 'HeaderLatestMedia',
     [HomeSectionType.NextUp]: 'NextUp',
-    [HomeSectionType.LiveTv]: 'LiveTV'
+    [HomeSectionType.LiveTv]: 'LiveTV',
+    [HomeSectionType.RecentlyAddedMovies]: 'HeaderLatestMovies',
+    [HomeSectionType.RecentlyAddedShows]: 'RecentlyAddedShows',
+    [HomeSectionType.RecentlyAddedAlbums]: 'RecentlyAddedAlbums',
+    [HomeSectionType.RecentlyAddedArtists]: 'RecentlyAddedArtists',
+    [HomeSectionType.RecentlyAddedBooks]: 'HeaderLatestBooks',
+    [HomeSectionType.RecentlyAddedAudiobooks]: 'RecentlyAddedAudiobooks',
+    [HomeSectionType.RecentlyAddedMusicVideos]: 'HeaderLatestMusicVideos'
 };
 
 function isSection(value: string | null | undefined): value is Section {
@@ -103,7 +117,7 @@ export default function HomeSectionEditor({ getDefaultSection, userSettings }: R
         return () => sortable.destroy();
     }, []);
 
-    const move = (section: Section, offset: number) => {
+    const move = useCallback((section: Section, offset: number) => {
         setSections(current => {
             const index = current.indexOf(section);
             const targetIndex = index + offset;
@@ -114,9 +128,9 @@ export default function HomeSectionEditor({ getDefaultSection, userSettings }: R
             next.splice(targetIndex, 0, moved);
             return next;
         });
-    };
+    }, []);
 
-    const toggle = (section: Section) => {
+    const toggle = useCallback((section: Section) => {
         const index = sections.indexOf(section);
         const visible = index < visibleCount;
         setSections(current => {
@@ -126,12 +140,27 @@ export default function HomeSectionEditor({ getDefaultSection, userSettings }: R
             return next;
         });
         setVisibleCount(current => current + (visible ? -1 : 1));
-    };
+    }, [ sections, visibleCount ]);
+
+    const handleAction = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+        const section = event.currentTarget.dataset.section as Section;
+        switch (event.currentTarget.dataset.action) {
+            case 'toggle':
+                toggle(section);
+                break;
+            case 'up':
+                move(section, -1);
+                break;
+            case 'down':
+                move(section, 1);
+                break;
+        }
+    }, [ move, toggle ]);
 
     const savedSections = [
         ...sections.slice(0, visibleCount),
         ...Array(Math.max(0, MAX_HOME_SECTIONS - visibleCount)).fill(HomeSectionType.None)
-    ];
+    ].map((section, index) => ({ id: `home-section-${index}`, section }));
 
     return (
         <div className='verticalSection homeSectionsEditor'>
@@ -150,7 +179,9 @@ export default function HomeSectionEditor({ getDefaultSection, userSettings }: R
                             <button
                                 aria-label={globalize.translate(visible ? 'HideHomeSection' : 'ShowHomeSection')}
                                 className='paper-icon-button-light autoSize'
-                                onClick={() => toggle(section)}
+                                data-action='toggle'
+                                data-section={section}
+                                onClick={handleAction}
                                 title={globalize.translate(visible ? 'HideHomeSection' : 'ShowHomeSection')}
                                 type='button'
                             >
@@ -159,8 +190,10 @@ export default function HomeSectionEditor({ getDefaultSection, userSettings }: R
                             <button
                                 aria-label={globalize.translate('Up')}
                                 className='paper-icon-button-light autoSize'
+                                data-action='up'
+                                data-section={section}
                                 disabled={index === 0}
-                                onClick={() => move(section, -1)}
+                                onClick={handleAction}
                                 title={globalize.translate('Up')}
                                 type='button'
                             >
@@ -169,8 +202,10 @@ export default function HomeSectionEditor({ getDefaultSection, userSettings }: R
                             <button
                                 aria-label={globalize.translate('Down')}
                                 className='paper-icon-button-light autoSize'
+                                data-action='down'
+                                data-section={section}
                                 disabled={index === sections.length - 1}
-                                onClick={() => move(section, 1)}
+                                onClick={handleAction}
                                 title={globalize.translate('Down')}
                                 type='button'
                             >
@@ -181,8 +216,8 @@ export default function HomeSectionEditor({ getDefaultSection, userSettings }: R
                     );
                 })}
             </div>
-            {savedSections.map((section, index) => (
-                <input id={`selectHomeSection${index + 1}`} key={index} type='hidden' value={section} readOnly />
+            {savedSections.map(({ id, section }, index) => (
+                <input id={`selectHomeSection${index + 1}`} key={id} type='hidden' value={section} readOnly />
             ))}
         </div>
     );

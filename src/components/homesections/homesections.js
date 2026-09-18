@@ -12,6 +12,7 @@ import { loadLibraryTiles } from './sections/libraryTiles';
 import { loadLiveTV } from './sections/liveTv';
 import { loadNextUp } from './sections/nextUp';
 import { loadRecentlyAdded } from './sections/recentlyAdded';
+import { loadRecentlyAddedByType } from './sections/recentlyAddedByType';
 import { loadResume } from './sections/resume';
 
 import 'elements/emby-button/paper-icon-button-light';
@@ -21,11 +22,11 @@ import 'elements/emby-button/emby-button';
 
 import './homesections.scss';
 
-const MAX_SECTIONS = 10;
+const MAX_SECTIONS = 16;
 const MAX_SECTIONS_TV = MAX_SECTIONS + 1; // TV layout can have an extra section to ensure a library section is always visible
 
 export function getDefaultSection(index) {
-    if (index < 0 || index > DEFAULT_SECTIONS.length) return '';
+    if (index < 0 || index >= DEFAULT_SECTIONS.length) return '';
     return DEFAULT_SECTIONS[index];
 }
 
@@ -168,6 +169,15 @@ function loadSection(page, apiClient, user, userSettings, userViews, section, in
             break;
         case HomeSectionType.SmallLibraryTiles:
             loadLibraryTiles(elem, userViews, options);
+            break;
+        case HomeSectionType.RecentlyAddedMovies:
+        case HomeSectionType.RecentlyAddedShows:
+        case HomeSectionType.RecentlyAddedAlbums:
+        case HomeSectionType.RecentlyAddedArtists:
+        case HomeSectionType.RecentlyAddedBooks:
+        case HomeSectionType.RecentlyAddedAudiobooks:
+        case HomeSectionType.RecentlyAddedMusicVideos:
+            loadRecentlyAddedByType(elem, apiClient, section, options);
             break;
         default:
             elem.innerHTML = '';

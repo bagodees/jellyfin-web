@@ -21,7 +21,7 @@ import { LibraryTab } from '../../types/libraryTab.ts';
 import { renderComponent } from '../../utils/reactUtils.tsx';
 import HomeSectionEditor from '../../apps/legacy/features/homePreferences/HomeSectionEditor.tsx';
 
-const numConfigurableSections = 10;
+const numConfigurableSections = 16;
 
 function renderViews(page, user, result) {
     let folderHtml = '';
@@ -492,16 +492,10 @@ async function saveUser(context, user, userSettingsInstance, apiClient) {
 
     userSettingsInstance.set('tvhome', context.querySelector('.selectTVHomeScreen').value);
 
-    userSettingsInstance.set('homesection0', context.querySelector('#selectHomeSection1').value);
-    userSettingsInstance.set('homesection1', context.querySelector('#selectHomeSection2').value);
-    userSettingsInstance.set('homesection2', context.querySelector('#selectHomeSection3').value);
-    userSettingsInstance.set('homesection3', context.querySelector('#selectHomeSection4').value);
-    userSettingsInstance.set('homesection4', context.querySelector('#selectHomeSection5').value);
-    userSettingsInstance.set('homesection5', context.querySelector('#selectHomeSection6').value);
-    userSettingsInstance.set('homesection6', context.querySelector('#selectHomeSection7').value);
-    userSettingsInstance.set('homesection7', context.querySelector('#selectHomeSection8').value);
-    userSettingsInstance.set('homesection8', context.querySelector('#selectHomeSection9').value);
-    userSettingsInstance.set('homesection9', context.querySelector('#selectHomeSection10').value);
+    const homeSectionInputs = context.querySelectorAll('[id^="selectHomeSection"]');
+    for (i = 0, length = homeSectionInputs.length; i < length; i++) {
+        userSettingsInstance.set(`homesection${i}`, homeSectionInputs[i].value);
+    }
 
     const selectLandings = context.querySelectorAll('.selectLanding');
     for (i = 0, length = selectLandings.length; i < length; i++) {
@@ -576,7 +570,9 @@ function embed(options, self) {
 
     options.element.innerHTML = globalize.translateHtml(workingTemplate, 'core');
 
-    options.element.querySelectorAll('[id^="selectHomeSection"]').forEach(select => select.parentElement.remove());
+    options.element.querySelectorAll('[id^="selectHomeSection"]').forEach(select => {
+        select.parentElement.remove();
+    });
 
     options.element.querySelector('.viewOrderList').addEventListener('click', onSectionOrderListClick);
     options.element.querySelector('form').addEventListener('submit', onSubmit.bind(self));

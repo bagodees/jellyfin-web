@@ -10,7 +10,14 @@ export enum HomeSectionType {
     LatestMedia = 'latestmedia',
     NextUp = 'nextup',
     LiveTv = 'livetv',
-    ResumeBook = 'resumebook'
+    ResumeBook = 'resumebook',
+    RecentlyAddedMovies = 'recentlyaddedmovies',
+    RecentlyAddedShows = 'recentlyaddedshows',
+    RecentlyAddedAlbums = 'recentlyaddedalbums',
+    RecentlyAddedArtists = 'recentlyaddedartists',
+    RecentlyAddedBooks = 'recentlyaddedbooks',
+    RecentlyAddedAudiobooks = 'recentlyaddedaudiobooks',
+    RecentlyAddedMusicVideos = 'recentlyaddedmusicvideos'
 }
 
 // NOTE: This needs to match the server defaults
