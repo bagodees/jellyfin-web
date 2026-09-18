@@ -64,12 +64,16 @@ function renderHomeSectionsEditor(context, userSettings) {
         ...savedSections.filter(section => section && section !== HomeSectionType.None),
         ...CONFIGURABLE_SECTIONS.filter(section => !savedSections.includes(section))
     ];
+    const visibleSectionCount = savedSections.filter(section => section && section !== HomeSectionType.None).length;
     const list = context.querySelector('.homeSectionsList');
     list.innerHTML = sections.map((section, index) => {
         const labelKey = homeSectionLabels[section];
         const label = labelKey?.includes(' ') ? labelKey : globalize.translate(labelKey || section);
-        const hidden = index >= savedSections.filter(value => value && value !== HomeSectionType.None).length;
-        return `<div class="listItem homeSectionItem${hidden ? ' homeSectionItem-hidden' : ''}" data-section="${escapeHtml(section)}" data-hidden="${hidden}" draggable="true">
+        const hidden = index >= visibleSectionCount;
+        const insertionLine = index === visibleSectionCount && visibleSectionCount < sections.length
+            ? '<div class="homeSectionInsertionLine">Disabled sections — enable one to add it above this line</div>'
+            : '';
+        return `${insertionLine}<div class="listItem homeSectionItem${hidden ? ' homeSectionItem-hidden' : ''}" data-section="${escapeHtml(section)}" data-hidden="${hidden}" draggable="true">
             <div class="listItemBody">${escapeHtml(label)}</div>
             <button type="button" is="paper-icon-button-light" class="btnHomeSectionToggle autoSize" title="${hidden ? 'Show section' : 'Hide section'}"><span class="material-icons ${hidden ? 'visibility_off' : 'visibility'}" aria-hidden="true"></span></button>
             <button type="button" is="paper-icon-button-light" class="btnHomeSectionUp autoSize" title="${globalize.translate('Up')}"><span class="material-icons keyboard_arrow_up" aria-hidden="true"></span></button>
