@@ -13,6 +13,7 @@ import { loadLiveTV } from './sections/liveTv';
 import { loadNextUp } from './sections/nextUp';
 import { loadRecentlyAdded } from './sections/recentlyAdded';
 import { loadResume } from './sections/resume';
+import { loadCustomSection } from './sections/custom';
 
 import 'elements/emby-button/paper-icon-button-light';
 import 'elements/emby-itemscontainer/emby-itemscontainer';
@@ -21,7 +22,7 @@ import 'elements/emby-button/emby-button';
 
 import './homesections.scss';
 
-const MAX_SECTIONS = 10;
+const MAX_SECTIONS = DEFAULT_SECTIONS.length;
 const MAX_SECTIONS_TV = MAX_SECTIONS + 1; // TV layout can have an extra section to ensure a library section is always visible
 
 export function getDefaultSection(index) {
@@ -170,7 +171,7 @@ function loadSection(page, apiClient, user, userSettings, userViews, section, in
             loadLibraryTiles(elem, userViews, options);
             break;
         default:
-            elem.innerHTML = '';
+            loadCustomSection(elem, apiClient, section, options);
     }
 
     return Promise.resolve();

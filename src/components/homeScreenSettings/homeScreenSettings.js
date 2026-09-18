@@ -11,15 +11,111 @@ import globalize from '../../lib/globalize';
 import loading from '../loading/loading';
 import Events from '../../utils/events.ts';
 import homeSections from '../homesections/homesections';
+import { CONFIGURABLE_SECTIONS, HomeSectionType } from '../../constants/homeSectionType';
 import dom from '../../utils/dom';
 import '../listview/listview.scss';
+import './homeScreenSettings.scss';
 import '../../elements/emby-select/emby-select';
 import '../../elements/emby-checkbox/emby-checkbox';
 import toast from '../toast/toast';
 import template from './homeScreenSettings.template.html';
 import { LibraryTab } from '../../types/libraryTab.ts';
 
-const numConfigurableSections = 10;
+const numConfigurableSections = CONFIGURABLE_SECTIONS.length;
+
+const homeSectionLabels = {
+    smalllibrarytiles: 'HeaderMyMedia',
+    resume: 'HeaderContinueWatching',
+    nextup: 'NextUp',
+    resumeaudio: 'HeaderContinueListening',
+    resumebook: 'HeaderContinueReading',
+    latestmedia: 'HeaderLatestMedia',
+    livetv: 'LiveTV',
+    recentlyaddedmovies: 'HeaderLatestMovies',
+    recentlyaddedshows: 'HeaderLatestEpisodes',
+    recentlyaddedalbums: 'HeaderLatestMusic',
+    recentlyaddedartists: 'Artists',
+    recentlyaddedbooks: 'HeaderLatestBooks',
+    recentlyaddedaudiobooks: 'HeaderLatestBooks',
+    recentlyaddedmusicvideos: 'HeaderLatestMusicVideos',
+    collections: 'Collections',
+    continuewatchingnextup: 'Continue Watching / Next Up',
+    latestmovies: 'Latest Movies',
+    latestshows: 'Latest Shows',
+    latestalbums: 'Latest Albums',
+    latestbooks: 'Latest Books',
+    latestaudiobooks: 'Latest Audiobooks',
+    latestmusicvideos: 'Latest Music Videos',
+    mylist: 'My List',
+    watchagain: 'Watch Again',
+    upcomingshows: 'Upcoming Shows',
+    upcomingmovies: 'Upcoming Movies',
+    upcomingmusic: 'Upcoming Music',
+    upcomingbooks: 'Upcoming Books',
+    genre: 'Genres'
+};
+
+function renderHomeSectionsEditor(context, userSettings) {
+    const selectElements = Array.from(context.querySelectorAll('[id^="selectHomeSection"]'));
+    selectElements.forEach(select => select.parentElement.classList.add('hide'));
+
+    const savedSections = Array.from({ length: numConfigurableSections }, (_, index) => userSettings.get(`homesection${index}`) || homeSections.getDefaultSection(index));
+    const sections = [
+        ...savedSections.filter(section => section && section !== HomeSectionType.None),
+        ...CONFIGURABLE_SECTIONS.filter(section => !savedSections.includes(section))
+    ];
+    const list = context.querySelector('.homeSectionsList');
+    list.innerHTML = sections.map((section, index) => {
+        const labelKey = homeSectionLabels[section];
+        const label = labelKey?.includes(' ') ? labelKey : globalize.translate(labelKey || section);
+        const hidden = index >= savedSections.filter(value => value && value !== HomeSectionType.None).length;
+        return `<div class="listItem homeSectionItem${hidden ? ' homeSectionItem-hidden' : ''}" data-section="${escapeHtml(section)}" data-hidden="${hidden}" draggable="true">
+            <div class="listItemBody">${escapeHtml(label)}</div>
+            <button type="button" is="paper-icon-button-light" class="btnHomeSectionToggle autoSize" title="${hidden ? 'Show section' : 'Hide section'}"><span class="material-icons ${hidden ? 'visibility_off' : 'visibility'}" aria-hidden="true"></span></button>
+            <button type="button" is="paper-icon-button-light" class="btnHomeSectionUp autoSize" title="${globalize.translate('Up')}"><span class="material-icons keyboard_arrow_up" aria-hidden="true"></span></button>
+            <button type="button" is="paper-icon-button-light" class="btnHomeSectionDown autoSize" title="${globalize.translate('Down')}"><span class="material-icons keyboard_arrow_down" aria-hidden="true"></span></button>
+            <span class="material-icons homeSectionDragHandle" aria-label="Drag to reorder">drag_handle</span>
+        </div>`;
+    }).join('');
+}
+
+function onHomeSectionListClick(e) {
+    const target = dom.parentWithClass(e.target, 'btnHomeSectionToggle') || dom.parentWithClass(e.target, 'btnHomeSectionUp') || dom.parentWithClass(e.target, 'btnHomeSectionDown');
+    if (!target) return;
+    const item = dom.parentWithClass(target, 'homeSectionItem');
+    if (!item) return;
+    if (target.classList.contains('btnHomeSectionToggle')) {
+        const hidden = item.getAttribute('data-hidden') === 'true';
+        item.setAttribute('data-hidden', String(!hidden));
+        item.classList.toggle('homeSectionItem-hidden', !hidden);
+        target.title = hidden ? 'Hide section' : 'Show section';
+        target.querySelector('.material-icons').className = `material-icons ${hidden ? 'visibility' : 'visibility_off'}`;
+        return;
+    }
+    const sibling = target.classList.contains('btnHomeSectionUp') ? item.previousElementSibling : item.nextElementSibling;
+    if (sibling) item.parentElement.insertBefore(item, target.classList.contains('btnHomeSectionUp') ? sibling : sibling.nextElementSibling);
+}
+
+function onHomeSectionDragStart(e) {
+    const item = dom.parentWithClass(e.target, 'homeSectionItem');
+    if (item) e.dataTransfer.setData('text/plain', item.getAttribute('data-section'));
+}
+
+function onHomeSectionDragOver(e) {
+    const item = dom.parentWithClass(e.target, 'homeSectionItem');
+    if (!item) return;
+    e.preventDefault();
+    const dragged = e.currentTarget.querySelector('.homeSectionItem-dragging');
+    if (dragged && dragged !== item) {
+        const before = e.clientY < item.getBoundingClientRect().top + (item.offsetHeight / 2);
+        item.parentElement.insertBefore(dragged, before ? item : item.nextElementSibling);
+    }
+}
+
+function onHomeSectionDragEnd(e) {
+    const item = dom.parentWithClass(e.target, 'homeSectionItem');
+    if (item) item.classList.remove('homeSectionItem-dragging');
+}
 
 function renderViews(page, user, result) {
     let folderHtml = '';
@@ -323,7 +419,7 @@ function renderViewOrder(context, user, result) {
 }
 
 function updateHomeSectionValues(context, userSettings) {
-    for (let i = 1; i <= numConfigurableSections; i++) {
+    for (let i = 1; i <= 10; i++) {
         const select = context.querySelector(`#selectHomeSection${i}`);
         const defaultValue = homeSections.getDefaultSection(i - 1);
 
@@ -341,6 +437,7 @@ function updateHomeSectionValues(context, userSettings) {
     }
 
     context.querySelector('.selectTVHomeScreen').value = userSettings.get('tvhome') || '';
+    renderHomeSectionsEditor(context, userSettings);
 }
 
 function getPerLibrarySettingsHtml(item, user, userSettings) {
@@ -507,16 +604,13 @@ async function saveUser(context, user, userSettingsInstance, apiClient) {
 
     userSettingsInstance.set('tvhome', context.querySelector('.selectTVHomeScreen').value);
 
-    userSettingsInstance.set('homesection0', context.querySelector('#selectHomeSection1').value);
-    userSettingsInstance.set('homesection1', context.querySelector('#selectHomeSection2').value);
-    userSettingsInstance.set('homesection2', context.querySelector('#selectHomeSection3').value);
-    userSettingsInstance.set('homesection3', context.querySelector('#selectHomeSection4').value);
-    userSettingsInstance.set('homesection4', context.querySelector('#selectHomeSection5').value);
-    userSettingsInstance.set('homesection5', context.querySelector('#selectHomeSection6').value);
-    userSettingsInstance.set('homesection6', context.querySelector('#selectHomeSection7').value);
-    userSettingsInstance.set('homesection7', context.querySelector('#selectHomeSection8').value);
-    userSettingsInstance.set('homesection8', context.querySelector('#selectHomeSection9').value);
-    userSettingsInstance.set('homesection9', context.querySelector('#selectHomeSection10').value);
+    const homeSectionItems = Array.from(context.querySelectorAll('.homeSectionItem')).filter(item => item.getAttribute('data-hidden') !== 'true');
+    for (let sectionIndex = 0; sectionIndex < numConfigurableSections; sectionIndex++) {
+        userSettingsInstance.set(
+            `homesection${sectionIndex}`,
+            homeSectionItems[sectionIndex]?.getAttribute('data-section') || HomeSectionType.None
+        );
+    }
 
     const selectLandings = context.querySelectorAll('.selectLanding');
     for (i = 0, length = selectLandings.length; i < length; i++) {
@@ -592,6 +686,14 @@ function embed(options, self) {
     options.element.innerHTML = globalize.translateHtml(workingTemplate, 'core');
 
     options.element.querySelector('.viewOrderList').addEventListener('click', onSectionOrderListClick);
+    options.element.querySelector('.homeSectionsList').addEventListener('click', onHomeSectionListClick);
+    options.element.querySelector('.homeSectionsList').addEventListener('dragstart', e => {
+        const item = dom.parentWithClass(e.target, 'homeSectionItem');
+        if (item) item.classList.add('homeSectionItem-dragging');
+        onHomeSectionDragStart(e);
+    });
+    options.element.querySelector('.homeSectionsList').addEventListener('dragover', onHomeSectionDragOver);
+    options.element.querySelector('.homeSectionsList').addEventListener('dragend', onHomeSectionDragEnd);
     options.element.querySelector('form').addEventListener('submit', onSubmit.bind(self));
     options.element.addEventListener('change', onChange);
 
