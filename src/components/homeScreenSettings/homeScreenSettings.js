@@ -18,6 +18,8 @@ import '../../elements/emby-checkbox/emby-checkbox';
 import toast from '../toast/toast';
 import template from './homeScreenSettings.template.html';
 import { LibraryTab } from '../../types/libraryTab.ts';
+import { renderComponent } from '../../utils/reactUtils.tsx';
+import HomeSectionEditor from '../../apps/legacy/features/homePreferences/HomeSectionEditor.tsx';
 
 const numConfigurableSections = 10;
 
@@ -323,23 +325,6 @@ function renderViewOrder(context, user, result) {
 }
 
 function updateHomeSectionValues(context, userSettings) {
-    for (let i = 1; i <= numConfigurableSections; i++) {
-        const select = context.querySelector(`#selectHomeSection${i}`);
-        const defaultValue = homeSections.getDefaultSection(i - 1);
-
-        const option = select.querySelector(`option[value="${defaultValue}"]`) || select.querySelector('option[value=""]');
-
-        const userValue = userSettings.get(`homesection${i - 1}`);
-
-        if (option) option.value = '';
-
-        if (userValue === defaultValue || !userValue) {
-            select.value = '';
-        } else {
-            select.value = userValue;
-        }
-    }
-
     context.querySelector('.selectTVHomeScreen').value = userSettings.get('tvhome') || '';
 }
 
@@ -591,6 +576,8 @@ function embed(options, self) {
 
     options.element.innerHTML = globalize.translateHtml(workingTemplate, 'core');
 
+    options.element.querySelectorAll('[id^="selectHomeSection"]').forEach(select => select.parentElement.remove());
+
     options.element.querySelector('.viewOrderList').addEventListener('click', onSectionOrderListClick);
     options.element.querySelector('form').addEventListener('submit', onSubmit.bind(self));
     options.element.addEventListener('change', onChange);
@@ -630,6 +617,12 @@ class HomeScreenSettings {
 
                 loadForm(context, user, userSettings, apiClient);
 
+                self.unmountHomeSectionEditor?.();
+                self.unmountHomeSectionEditor = renderComponent(HomeSectionEditor, {
+                    getDefaultSection: homeSections.getDefaultSection,
+                    userSettings
+                }, context.querySelector('.homeSectionsEditorContainer'));
+
                 if (autoFocus) {
                     focusManager.autoFocus(context);
                 }
@@ -642,6 +635,7 @@ class HomeScreenSettings {
     }
 
     destroy() {
+        this.unmountHomeSectionEditor?.();
         this.options = null;
     }
 }
