@@ -18,6 +18,7 @@ import { loadRecentlyAddedByType } from './sections/recentlyAddedByType';
 import { loadResume } from './sections/resume';
 import { loadWatchAgain } from './sections/watchAgain';
 import { loadUpcomingShows } from './sections/upcomingShows';
+import { loadGenres } from './sections/genres';
 
 import 'elements/emby-button/paper-icon-button-light';
 import 'elements/emby-itemscontainer/emby-itemscontainer';
@@ -195,6 +196,9 @@ function loadSection(page, apiClient, user, userSettings, userViews, section, in
             break;
         case HomeSectionType.UpcomingShows:
             loadUpcomingShows(elem, apiClient, options);
+            break;
+        case HomeSectionType.Genres:
+            loadGenres(elem, apiClient, options);
             break;
         default:
             elem.innerHTML = '';

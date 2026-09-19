@@ -22,7 +22,8 @@ export enum HomeSectionType {
     WatchAgain = 'watchagain',
     MyList = 'mylist',
     ContinueWatchingNextUp = 'continuewatchingnextup',
-    UpcomingShows = 'upcomingshows'
+    UpcomingShows = 'upcomingshows',
+    Genres = 'genres'
 }
 
 // NOTE: This needs to match the server defaults
