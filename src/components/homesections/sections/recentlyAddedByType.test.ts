@@ -12,7 +12,8 @@ describe('recentlyAddedSectionDefinitions', () => {
             recentlyaddedartists: { itemType: BaseItemKind.MusicArtist, shape: 'square' },
             recentlyaddedbooks: { itemType: BaseItemKind.Book, shape: 'portrait' },
             recentlyaddedaudiobooks: { itemType: BaseItemKind.AudioBook, shape: 'portrait' },
-            recentlyaddedmusicvideos: { itemType: BaseItemKind.MusicVideo, shape: 'backdrop' }
+            recentlyaddedmusicvideos: { itemType: BaseItemKind.MusicVideo, shape: 'backdrop' },
+            collections: { itemType: BaseItemKind.BoxSet, shape: 'portrait' }
         });
     });
 });

@@ -17,7 +17,8 @@ export enum HomeSectionType {
     RecentlyAddedArtists = 'recentlyaddedartists',
     RecentlyAddedBooks = 'recentlyaddedbooks',
     RecentlyAddedAudiobooks = 'recentlyaddedaudiobooks',
-    RecentlyAddedMusicVideos = 'recentlyaddedmusicvideos'
+    RecentlyAddedMusicVideos = 'recentlyaddedmusicvideos',
+    Collections = 'collections'
 }
 
 // NOTE: This needs to match the server defaults

@@ -177,6 +177,7 @@ function loadSection(page, apiClient, user, userSettings, userViews, section, in
         case HomeSectionType.RecentlyAddedBooks:
         case HomeSectionType.RecentlyAddedAudiobooks:
         case HomeSectionType.RecentlyAddedMusicVideos:
+        case HomeSectionType.Collections:
             loadRecentlyAddedByType(elem, apiClient, section, options);
             break;
         default:

@@ -13,5 +13,6 @@ export const recentlyAddedSectionDefinitions: Record<string, RecentlyAddedSectio
     recentlyaddedartists: { itemType: BaseItemKind.MusicArtist, title: 'RecentlyAddedArtists', shape: 'square' },
     recentlyaddedbooks: { itemType: BaseItemKind.Book, title: 'HeaderLatestBooks', shape: 'portrait' },
     recentlyaddedaudiobooks: { itemType: BaseItemKind.AudioBook, title: 'RecentlyAddedAudiobooks', shape: 'portrait' },
-    recentlyaddedmusicvideos: { itemType: BaseItemKind.MusicVideo, title: 'HeaderLatestMusicVideos', shape: 'backdrop' }
+    recentlyaddedmusicvideos: { itemType: BaseItemKind.MusicVideo, title: 'HeaderLatestMusicVideos', shape: 'backdrop' },
+    collections: { itemType: BaseItemKind.BoxSet, title: 'Collections', shape: 'portrait' }
 };
