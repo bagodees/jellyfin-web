@@ -13,7 +13,13 @@ describe('recentlyAddedSectionDefinitions', () => {
             recentlyaddedbooks: { itemType: BaseItemKind.Book, shape: 'portrait' },
             recentlyaddedaudiobooks: { itemType: BaseItemKind.AudioBook, shape: 'portrait' },
             recentlyaddedmusicvideos: { itemType: BaseItemKind.MusicVideo, shape: 'backdrop' },
-            collections: { itemType: BaseItemKind.BoxSet, shape: 'portrait' }
+            collections: { itemType: BaseItemKind.BoxSet, shape: 'portrait' },
+            latestmovies: { itemType: BaseItemKind.Movie, shape: 'portrait', releaseBased: true },
+            latestshows: { itemType: BaseItemKind.Series, shape: 'backdrop', releaseBased: true },
+            latestalbums: { itemType: BaseItemKind.MusicAlbum, shape: 'square', releaseBased: true },
+            latestbooks: { itemType: BaseItemKind.Book, shape: 'portrait', releaseBased: true },
+            latestaudiobooks: { itemType: BaseItemKind.AudioBook, shape: 'portrait', releaseBased: true },
+            latestmusicvideos: { itemType: BaseItemKind.MusicVideo, shape: 'backdrop', releaseBased: true }
         });
     });
 });

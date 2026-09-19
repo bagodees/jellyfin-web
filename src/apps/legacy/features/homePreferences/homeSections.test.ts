@@ -34,4 +34,14 @@ describe('getSavedHomeSections', () => {
             HomeSectionType.RecentlyAddedAlbums
         ]);
     });
+
+    it('reads sections saved after the original sixteen slots', () => {
+        const settings = {
+            get: (name: string) => name === 'homesection16' ? HomeSectionType.LatestMovies : HomeSectionType.None
+        };
+
+        expect(getSavedHomeSections(settings, noDefault)).toEqual([
+            HomeSectionType.LatestMovies
+        ]);
+    });
 });
