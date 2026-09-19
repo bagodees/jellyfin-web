@@ -10,6 +10,7 @@ import { loadRecordings } from './sections/activeRecordings';
 import { loadLibraryButtons } from './sections/libraryButtons';
 import { loadLibraryTiles } from './sections/libraryTiles';
 import { loadLiveTV } from './sections/liveTv';
+import { loadContinueWatchingNextUp } from './sections/continueWatchingNextUp';
 import { loadMyList } from './sections/myList';
 import { loadNextUp } from './sections/nextUp';
 import { loadRecentlyAdded } from './sections/recentlyAdded';
@@ -187,6 +188,9 @@ function loadSection(page, apiClient, user, userSettings, userViews, section, in
             break;
         case HomeSectionType.MyList:
             loadMyList(elem, apiClient, options);
+            break;
+        case HomeSectionType.ContinueWatchingNextUp:
+            loadContinueWatchingNextUp(elem, apiClient, userSettings, options);
             break;
         default:
             elem.innerHTML = '';

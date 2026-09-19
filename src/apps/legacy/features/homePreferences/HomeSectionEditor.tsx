@@ -38,7 +38,8 @@ const sectionLabels: Record<Section, string> = {
     [HomeSectionType.RecentlyAddedMusicVideos]: 'HeaderLatestMusicVideos',
     [HomeSectionType.Collections]: 'Collections',
     [HomeSectionType.WatchAgain]: 'WatchAgain',
-    [HomeSectionType.MyList]: 'MyList'
+    [HomeSectionType.MyList]: 'MyList',
+    [HomeSectionType.ContinueWatchingNextUp]: 'ContinueWatchingNextUp'
 };
 
 function getSections(userSettings: HomeSectionSettings, getDefaultSection: HomeSectionEditorProps['getDefaultSection']) {

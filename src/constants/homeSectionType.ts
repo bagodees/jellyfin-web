@@ -20,7 +20,8 @@ export enum HomeSectionType {
     RecentlyAddedMusicVideos = 'recentlyaddedmusicvideos',
     Collections = 'collections',
     WatchAgain = 'watchagain',
-    MyList = 'mylist'
+    MyList = 'mylist',
+    ContinueWatchingNextUp = 'continuewatchingnextup'
 }
 
 // NOTE: This needs to match the server defaults
