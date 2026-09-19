@@ -41,7 +41,10 @@ const sectionLabels: Record<Section, string> = {
     [HomeSectionType.MyList]: 'MyList',
     [HomeSectionType.ContinueWatchingNextUp]: 'ContinueWatchingNextUp',
     [HomeSectionType.UpcomingShows]: 'UpcomingShows',
-    [HomeSectionType.Genres]: 'Genres'
+    [HomeSectionType.Genres]: 'Genres',
+    [HomeSectionType.LatestMovies]: 'LatestMovies', [HomeSectionType.LatestShows]: 'LatestShows',
+    [HomeSectionType.LatestAlbums]: 'LatestAlbums', [HomeSectionType.LatestBooks]: 'LatestBooks',
+    [HomeSectionType.LatestAudiobooks]: 'LatestAudiobooks', [HomeSectionType.LatestMusicVideos]: 'LatestMusicVideos'
 };
 
 function getSections(userSettings: HomeSectionSettings, getDefaultSection: HomeSectionEditorProps['getDefaultSection']) {

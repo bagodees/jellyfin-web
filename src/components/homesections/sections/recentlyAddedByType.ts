@@ -45,12 +45,13 @@ export function loadRecentlyAddedByType(
         const response = await getLibraryApi(api).getItems({
             enableImageTypes: [ ImageType.Primary, ImageType.Backdrop, ImageType.Thumb ],
             enableTotalRecordCount: false,
-            fields: [ ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated ],
+            fields: [ ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated, ItemFields.PremiereDate ],
             imageTypeLimit: 1,
             includeItemTypes: [ definition.itemType ],
             limit: options.enableOverflow ? 24 : 12,
             recursive: true,
-            sortBy: [ ItemSortBy.DateCreated ],
+            maxPremiereDate: definition.releaseBased ? new Date().toISOString() : undefined,
+            sortBy: [ definition.releaseBased ? ItemSortBy.PremiereDate : ItemSortBy.DateCreated ],
             sortOrder: [ SortOrder.Descending ],
             userId: apiClient.getCurrentUserId()
         });

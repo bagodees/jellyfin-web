@@ -4,6 +4,7 @@ export type RecentlyAddedSectionDefinition = {
     itemType: BaseItemKind;
     title: string;
     shape: 'backdrop' | 'portrait' | 'square';
+    releaseBased?: boolean;
 };
 
 export const recentlyAddedSectionDefinitions: Record<string, RecentlyAddedSectionDefinition> = {
@@ -14,5 +15,11 @@ export const recentlyAddedSectionDefinitions: Record<string, RecentlyAddedSectio
     recentlyaddedbooks: { itemType: BaseItemKind.Book, title: 'HeaderLatestBooks', shape: 'portrait' },
     recentlyaddedaudiobooks: { itemType: BaseItemKind.AudioBook, title: 'RecentlyAddedAudiobooks', shape: 'portrait' },
     recentlyaddedmusicvideos: { itemType: BaseItemKind.MusicVideo, title: 'HeaderLatestMusicVideos', shape: 'backdrop' },
-    collections: { itemType: BaseItemKind.BoxSet, title: 'Collections', shape: 'portrait' }
+    collections: { itemType: BaseItemKind.BoxSet, title: 'Collections', shape: 'portrait' },
+    latestmovies: { itemType: BaseItemKind.Movie, title: 'LatestMovies', shape: 'portrait', releaseBased: true },
+    latestshows: { itemType: BaseItemKind.Series, title: 'LatestShows', shape: 'backdrop', releaseBased: true },
+    latestalbums: { itemType: BaseItemKind.MusicAlbum, title: 'LatestAlbums', shape: 'square', releaseBased: true },
+    latestbooks: { itemType: BaseItemKind.Book, title: 'LatestBooks', shape: 'portrait', releaseBased: true },
+    latestaudiobooks: { itemType: BaseItemKind.AudioBook, title: 'LatestAudiobooks', shape: 'portrait', releaseBased: true },
+    latestmusicvideos: { itemType: BaseItemKind.MusicVideo, title: 'LatestMusicVideos', shape: 'backdrop', releaseBased: true }
 };

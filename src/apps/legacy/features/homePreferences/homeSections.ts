@@ -23,7 +23,9 @@ export const editableHomeSections = [
     HomeSectionType.MyList,
     HomeSectionType.ContinueWatchingNextUp,
     HomeSectionType.UpcomingShows,
-    HomeSectionType.Genres
+    HomeSectionType.Genres, HomeSectionType.LatestMovies, HomeSectionType.LatestShows,
+    HomeSectionType.LatestAlbums, HomeSectionType.LatestBooks, HomeSectionType.LatestAudiobooks,
+    HomeSectionType.LatestMusicVideos
 ] as const;
 
 export type EditableHomeSection = typeof editableHomeSections[number];

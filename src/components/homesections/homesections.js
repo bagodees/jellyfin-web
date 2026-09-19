@@ -183,6 +183,12 @@ function loadSection(page, apiClient, user, userSettings, userViews, section, in
         case HomeSectionType.RecentlyAddedAudiobooks:
         case HomeSectionType.RecentlyAddedMusicVideos:
         case HomeSectionType.Collections:
+        case HomeSectionType.LatestMovies:
+        case HomeSectionType.LatestShows:
+        case HomeSectionType.LatestAlbums:
+        case HomeSectionType.LatestBooks:
+        case HomeSectionType.LatestAudiobooks:
+        case HomeSectionType.LatestMusicVideos:
             loadRecentlyAddedByType(elem, apiClient, section, options);
             break;
         case HomeSectionType.WatchAgain:
