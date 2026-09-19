@@ -39,7 +39,8 @@ const sectionLabels: Record<Section, string> = {
     [HomeSectionType.Collections]: 'Collections',
     [HomeSectionType.WatchAgain]: 'WatchAgain',
     [HomeSectionType.MyList]: 'MyList',
-    [HomeSectionType.ContinueWatchingNextUp]: 'ContinueWatchingNextUp'
+    [HomeSectionType.ContinueWatchingNextUp]: 'ContinueWatchingNextUp',
+    [HomeSectionType.UpcomingShows]: 'UpcomingShows'
 };
 
 function getSections(userSettings: HomeSectionSettings, getDefaultSection: HomeSectionEditorProps['getDefaultSection']) {

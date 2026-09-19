@@ -21,7 +21,8 @@ export const editableHomeSections = [
     HomeSectionType.Collections,
     HomeSectionType.WatchAgain,
     HomeSectionType.MyList,
-    HomeSectionType.ContinueWatchingNextUp
+    HomeSectionType.ContinueWatchingNextUp,
+    HomeSectionType.UpcomingShows
 ] as const;
 
 export type EditableHomeSection = typeof editableHomeSections[number];
