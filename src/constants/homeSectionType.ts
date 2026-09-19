@@ -29,8 +29,8 @@ export const DEFAULT_SECTIONS: HomeSectionType[] = [
     HomeSectionType.ResumeBook,
     HomeSectionType.LiveTv,
     HomeSectionType.NextUp,
-    HomeSectionType.LatestMedia,
-    HomeSectionType.None,
+    HomeSectionType.RecentlyAddedMovies,
+    HomeSectionType.RecentlyAddedShows,
     HomeSectionType.None,
     HomeSectionType.None
 ];

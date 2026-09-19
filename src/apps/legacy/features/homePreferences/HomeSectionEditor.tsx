@@ -15,7 +15,6 @@ const availableSections = [
     HomeSectionType.Resume,
     HomeSectionType.ResumeAudio,
     HomeSectionType.ResumeBook,
-    HomeSectionType.LatestMedia,
     HomeSectionType.NextUp,
     HomeSectionType.LiveTv,
     HomeSectionType.RecentlyAddedMovies,
@@ -45,7 +44,6 @@ const sectionLabels: Record<Section, string> = {
     [HomeSectionType.Resume]: 'HeaderContinueWatching',
     [HomeSectionType.ResumeAudio]: 'HeaderContinueListening',
     [HomeSectionType.ResumeBook]: 'HeaderContinueReading',
-    [HomeSectionType.LatestMedia]: 'HeaderLatestMedia',
     [HomeSectionType.NextUp]: 'NextUp',
     [HomeSectionType.LiveTv]: 'LiveTV',
     [HomeSectionType.RecentlyAddedMovies]: 'HeaderLatestMovies',
@@ -62,9 +60,13 @@ function isSection(value: string | null | undefined): value is Section {
 }
 
 function getSavedSections(userSettings: UserSettings, getDefaultSection: HomeSectionEditorProps['getDefaultSection']) {
-    return Array.from({ length: MAX_HOME_SECTIONS }, (_, index) => (
+    const saved = Array.from({ length: MAX_HOME_SECTIONS }, (_, index) => (
         userSettings.get(`homesection${index}`) || getDefaultSection(index)
-    )).filter(isSection);
+    )).flatMap<Section>(section => section === HomeSectionType.LatestMedia
+        ? [ HomeSectionType.RecentlyAddedMovies, HomeSectionType.RecentlyAddedShows ]
+        : isSection(section) ? [ section ] : []);
+
+    return saved.filter((section, index) => saved.indexOf(section) === index);
 }
 
 function getSections(userSettings: UserSettings, getDefaultSection: HomeSectionEditorProps['getDefaultSection']) {
