@@ -4,37 +4,20 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { HomeSectionType } from 'constants/homeSectionType';
 import globalize from 'lib/globalize';
 
+import {
+    editableHomeSections,
+    getSavedHomeSections,
+    MAX_HOME_SECTIONS,
+    type EditableHomeSection,
+    type HomeSectionSettings
+} from './homeSections';
 import './HomeSectionEditor.scss';
 
-const MAX_HOME_SECTIONS = 16;
-
-const availableSections = [
-    HomeSectionType.SmallLibraryTiles,
-    HomeSectionType.LibraryButtons,
-    HomeSectionType.ActiveRecordings,
-    HomeSectionType.Resume,
-    HomeSectionType.ResumeAudio,
-    HomeSectionType.ResumeBook,
-    HomeSectionType.NextUp,
-    HomeSectionType.LiveTv,
-    HomeSectionType.RecentlyAddedMovies,
-    HomeSectionType.RecentlyAddedShows,
-    HomeSectionType.RecentlyAddedAlbums,
-    HomeSectionType.RecentlyAddedArtists,
-    HomeSectionType.RecentlyAddedBooks,
-    HomeSectionType.RecentlyAddedAudiobooks,
-    HomeSectionType.RecentlyAddedMusicVideos
-] as const;
-
-type Section = typeof availableSections[number];
-
-interface UserSettings {
-    get: (name: string) => string | null | undefined;
-}
+type Section = EditableHomeSection;
 
 interface HomeSectionEditorProps {
     getDefaultSection: (index: number) => HomeSectionType;
-    userSettings: UserSettings;
+    userSettings: HomeSectionSettings;
 }
 
 const sectionLabels: Record<Section, string> = {
@@ -55,32 +38,18 @@ const sectionLabels: Record<Section, string> = {
     [HomeSectionType.RecentlyAddedMusicVideos]: 'HeaderLatestMusicVideos'
 };
 
-function isSection(value: string | null | undefined): value is Section {
-    return availableSections.includes(value as Section);
-}
-
-function getSavedSections(userSettings: UserSettings, getDefaultSection: HomeSectionEditorProps['getDefaultSection']) {
-    const saved = Array.from({ length: MAX_HOME_SECTIONS }, (_, index) => (
-        userSettings.get(`homesection${index}`) || getDefaultSection(index)
-    )).flatMap<Section>(section => section === HomeSectionType.LatestMedia
-        ? [ HomeSectionType.RecentlyAddedMovies, HomeSectionType.RecentlyAddedShows ]
-        : isSection(section) ? [ section ] : []);
-
-    return saved.filter((section, index) => saved.indexOf(section) === index);
-}
-
-function getSections(userSettings: UserSettings, getDefaultSection: HomeSectionEditorProps['getDefaultSection']) {
-    const saved = getSavedSections(userSettings, getDefaultSection);
+function getSections(userSettings: HomeSectionSettings, getDefaultSection: HomeSectionEditorProps['getDefaultSection']) {
+    const saved = getSavedHomeSections(userSettings, getDefaultSection);
     return [
         ...saved,
-        ...availableSections.filter(section => !saved.includes(section))
+        ...editableHomeSections.filter(section => !saved.includes(section))
     ];
 }
 
 export default function HomeSectionEditor({ getDefaultSection, userSettings }: Readonly<HomeSectionEditorProps>) {
     const initialSections = useMemo(() => getSections(userSettings, getDefaultSection), [getDefaultSection, userSettings]);
     const [ sections, setSections ] = useState<Section[]>(initialSections);
-    const [ visibleCount, setVisibleCount ] = useState(() => getSavedSections(userSettings, getDefaultSection).length);
+    const [ visibleCount, setVisibleCount ] = useState(() => getSavedHomeSections(userSettings, getDefaultSection).length);
     const listRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

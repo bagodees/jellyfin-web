@@ -1,5 +1,4 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
-import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
 import { ItemFields } from '@jellyfin/sdk/lib/generated-client/models/item-fields';
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
@@ -13,24 +12,9 @@ import globalize from 'lib/globalize';
 import ServerConnections from 'lib/jellyfin-apiclient/ServerConnections';
 
 import type { SectionContainerElement, SectionOptions } from './section';
+import { recentlyAddedSectionDefinitions, type RecentlyAddedSectionDefinition } from './recentlyAddedDefinitions';
 
-type SectionDefinition = {
-    itemType: BaseItemKind;
-    title: string;
-    shape: 'backdrop' | 'portrait' | 'square';
-};
-
-const definitions: Record<string, SectionDefinition> = {
-    recentlyaddedmovies: { itemType: BaseItemKind.Movie, title: 'HeaderLatestMovies', shape: 'portrait' },
-    recentlyaddedshows: { itemType: BaseItemKind.Series, title: 'RecentlyAddedShows', shape: 'backdrop' },
-    recentlyaddedalbums: { itemType: BaseItemKind.MusicAlbum, title: 'RecentlyAddedAlbums', shape: 'square' },
-    recentlyaddedartists: { itemType: BaseItemKind.MusicArtist, title: 'RecentlyAddedArtists', shape: 'square' },
-    recentlyaddedbooks: { itemType: BaseItemKind.Book, title: 'HeaderLatestBooks', shape: 'portrait' },
-    recentlyaddedaudiobooks: { itemType: BaseItemKind.AudioBook, title: 'RecentlyAddedAudiobooks', shape: 'portrait' },
-    recentlyaddedmusicvideos: { itemType: BaseItemKind.MusicVideo, title: 'HeaderLatestMusicVideos', shape: 'backdrop' }
-};
-
-function getShape(shape: SectionDefinition['shape'], enableOverflow: boolean) {
+function getShape(shape: RecentlyAddedSectionDefinition['shape'], enableOverflow: boolean) {
     if (shape === 'backdrop') return getBackdropShape(enableOverflow);
     if (shape === 'square') return getSquareShape(enableOverflow);
     return getPortraitShape(enableOverflow);
@@ -42,7 +26,7 @@ export function loadRecentlyAddedByType(
     section: string,
     options: SectionOptions
 ) {
-    const definition = definitions[section];
+    const definition = recentlyAddedSectionDefinitions[section];
     if (!definition) return;
 
     const containerClass = options.enableOverflow ? ' scrollSlider' : ' padded-left padded-right vertical-wrap';
