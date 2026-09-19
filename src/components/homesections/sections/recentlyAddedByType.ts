@@ -45,7 +45,7 @@ export function loadRecentlyAddedByType(
         const response = await getLibraryApi(api).getItems({
             enableImageTypes: [ ImageType.Primary, ImageType.Backdrop, ImageType.Thumb ],
             enableTotalRecordCount: false,
-            fields: [ ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated, ItemFields.PremiereDate ],
+            fields: [ ItemFields.PrimaryImageAspectRatio, ItemFields.DateCreated ],
             imageTypeLimit: 1,
             includeItemTypes: [ definition.itemType ],
             limit: options.enableOverflow ? 24 : 12,
