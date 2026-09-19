@@ -41,7 +41,7 @@ export function loadWatchAgain(elem: HTMLElement, apiClient: ApiClient, options:
             ...watchAgainQuery,
             enableImageTypes: [ImageType.Primary, ImageType.Backdrop, ImageType.Thumb],
             enableTotalRecordCount: false,
-            fields: [ItemFields.PrimaryImageAspectRatio, ItemFields.DatePlayed],
+            fields: [ItemFields.PrimaryImageAspectRatio],
             imageTypeLimit: 1,
             limit: options.enableOverflow ? 24 : 12,
             recursive: true,
