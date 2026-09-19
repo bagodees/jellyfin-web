@@ -18,7 +18,8 @@ export const editableHomeSections = [
     HomeSectionType.RecentlyAddedBooks,
     HomeSectionType.RecentlyAddedAudiobooks,
     HomeSectionType.RecentlyAddedMusicVideos,
-    HomeSectionType.Collections
+    HomeSectionType.Collections,
+    HomeSectionType.WatchAgain
 ] as const;
 
 export type EditableHomeSection = typeof editableHomeSections[number];

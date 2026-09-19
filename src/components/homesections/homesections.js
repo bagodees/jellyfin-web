@@ -14,6 +14,7 @@ import { loadNextUp } from './sections/nextUp';
 import { loadRecentlyAdded } from './sections/recentlyAdded';
 import { loadRecentlyAddedByType } from './sections/recentlyAddedByType';
 import { loadResume } from './sections/resume';
+import { loadWatchAgain } from './sections/watchAgain';
 
 import 'elements/emby-button/paper-icon-button-light';
 import 'elements/emby-itemscontainer/emby-itemscontainer';
@@ -179,6 +180,9 @@ function loadSection(page, apiClient, user, userSettings, userViews, section, in
         case HomeSectionType.RecentlyAddedMusicVideos:
         case HomeSectionType.Collections:
             loadRecentlyAddedByType(elem, apiClient, section, options);
+            break;
+        case HomeSectionType.WatchAgain:
+            loadWatchAgain(elem, apiClient, options);
             break;
         default:
             elem.innerHTML = '';
