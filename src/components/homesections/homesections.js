@@ -27,7 +27,7 @@ import 'elements/emby-button/emby-button';
 
 import './homesections.scss';
 
-const MAX_SECTIONS = 16;
+const MAX_SECTIONS = 32;
 const MAX_SECTIONS_TV = MAX_SECTIONS + 1; // TV layout can have an extra section to ensure a library section is always visible
 
 export function getDefaultSection(index) {

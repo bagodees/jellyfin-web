@@ -1,6 +1,6 @@
 import { HomeSectionType } from 'constants/homeSectionType';
 
-export const MAX_HOME_SECTIONS = 16;
+export const MAX_HOME_SECTIONS = 32;
 
 export const editableHomeSections = [
     HomeSectionType.SmallLibraryTiles,
